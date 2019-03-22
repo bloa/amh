@@ -1,3 +1,13 @@
+/*
+  Copyright (C) ORKAD team, CRIStAL, University of Lille, 2017
+  Aymeric Blot
+
+  This software is governed by the CeCILL-C license.
+  You can use, modify and/ or redistribute the software under the
+  terms of the CeCILL-C license as circulated by CEA, CNRS and INRIA
+  at the following URL "http://www.cecill.info".
+*/
+
 #pragma once
 
 namespace amh {
@@ -11,12 +21,24 @@ namespace amh {
       reseed(seed);
     }
 
+    void reseed() {
+      mt = std::mt19937();
+    }
     void reseed(int s) {
       mt = std::mt19937(s);
     }
 
+    long raw() {
+      return mt();
+    }
+
     int random(int max) {
       std::uniform_int_distribution<> dis(0, max-1);
+      return dis(mt);
+    }
+
+    double normal(double max){
+      std::normal_distribution<> dis(0, max-1);
       return dis(mt);
     }
 

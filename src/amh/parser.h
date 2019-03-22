@@ -361,8 +361,8 @@ namespace amh {
               lastp->use_implicit();
               lastp = NULL;
             }
-            int k;
-            if ((k = arg.find("=")) != std::string::npos) { // --param=...
+            size_t k = arg.find("=");
+            if (k != std::string::npos) { // --param=...
               std::string tmp = arg.substr(0, k);
               if (lower_params)
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
@@ -398,7 +398,7 @@ namespace amh {
               lastp = NULL;
             }
             std::string tmp;
-            for (int k=1; k<arg.length(); k++) {
+            for (unsigned int k=1; k<arg.length(); k++) {
               if (arg[k] == '=') {
                 if (k == 1)
                   throw std::runtime_error("amh::parser: what is `-='?");
@@ -484,7 +484,8 @@ namespace amh {
       for (auto& p : params)
         if (p->responds_to(name))
           return p;
-      throw std::runtime_error("amh::parser: no parameter found");
+      std::string msg = "amh::parser: parameter `"+name+"' was not declared";
+      throw std::runtime_error(msg);
     }
 
     bool got_free_params() {

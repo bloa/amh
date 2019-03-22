@@ -118,10 +118,10 @@ namespace amh {
     }
 
   protected:
-    algo<TIN,TOUT>** algo_left;
-    algo<TIN,TOUT>** algo_right;
     algo<TIN,TOUT>* algo_left_tmp = nullptr;
+    algo<TIN,TOUT>** algo_left;
     algo<TIN,TOUT>* algo_right_tmp = nullptr;
+    algo<TIN,TOUT>** algo_right;
     bool leak = false;
     bool last_check = true;
   };
@@ -277,10 +277,10 @@ namespace amh {
     }
 
   protected:
-    algo<TIN,TOUT>** algo_left;
-    algo<TIN,TOUT>** algo_right;
     algo<TIN,TOUT>* algo_left_tmp = nullptr;
+    algo<TIN,TOUT>** algo_left;
     algo<TIN,TOUT>* algo_right_tmp = nullptr;
+    algo<TIN,TOUT>** algo_right;
     bool leak = false;
     bool last_check = true;
   };

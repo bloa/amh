@@ -26,42 +26,46 @@ namespace amh {
 
   template <typename TIN, typename TOUT>
   TOUT retTypeHelper(TIN& _in) {
-    if (std::is_same<TIN,TOUT>::value)
-      return *(TOUT*)((void*)&_in);
-    else
-      return TOUT();
+    throw std::runtime_error("removed");
+    // if (std::is_same<TIN,TOUT>::value)
+    //   return *(TOUT*)((void*)&_in);
+    // else
+    //   return TOUT();
   }
 
   template <typename TIN, typename TOUT>
   TOUT retTypeHelper(TIN&& _in) {
-    if (std::is_same<TIN,TOUT>::value)
-      return *(TOUT*)((void*)&_in);
-    else
-      return TOUT();
+    throw std::runtime_error("removed");
+    // if (std::is_same<TIN,TOUT>::value)
+    //   return *(TOUT*)((void*)&_in);
+    // else
+    //   return TOUT();
   }
 
   template<class TIN, class TOUT=TIN>
   class algo {
   public:
     algo() {}
+    virtual ~algo() {}
 
-    virtual void init(TIN& _in) {};
+    virtual void init(TIN& _in) {}
 
     virtual TOUT operator()(TIN& _in) {
+      throw std::runtime_error("todo");
       //return retTypeHelper<TIN,TOUT>(_in);
-    };
+    }
 
     virtual TOUT operator()(TIN&& _in) {
       return operator()(_in);
-    };
+    }
 
     virtual bool check(TIN& _in) {
       return true;
-    };
+    }
 
     virtual bool check() {
       return true;
-    };
+    }
 
     template<class TFOO>
     algo_chain_fragile<TIN,TOUT,TFOO> operator+(algo<TOUT,TFOO>& _algo) {
@@ -113,30 +117,30 @@ namespace amh {
     algo_curry2() {}
 
     virtual void init(TIN1&, TIN2&) {
-    };
+    }
 
     virtual void init(std::pair<TIN1,TIN2>&) {
-    };
+    }
 
     virtual TOUT operator()(TIN1&, TIN2&) {
       return TOUT();
-    };
+    }
 
     virtual TOUT operator()(std::pair<TIN1,TIN2>&) {
       return TOUT();
-    };
+    }
 
     virtual bool check(TIN1&, TIN2&) {
       return true;
-    };
+    }
 
     virtual bool check(std::pair<TIN1,TIN2>&) {
       return true;
-    };
+    }
 
     virtual bool check() {
       return true;
-    };
+    }
 
     virtual std::string inspect() {
       std::string s = "algo<";
@@ -147,12 +151,12 @@ namespace amh {
       return s;
     }
 
-  protected:
-    template<class Fun, class Pair>
-    decltype(auto) splat(Fun&& fun, Pair&& pair) {
-      return fun(pair.first, pair.second);
-    }
-};
+  // protected:
+  //   template<class Fun, class Pair>
+  //   decltype(auto) splat(Fun&& fun, Pair&& pair) {
+  //     return fun(pair.first, pair.second);
+  //   }
+  };
 
 #if __cplusplus > 201103L
   template<class TOUT, class ...TIN>
@@ -161,30 +165,30 @@ namespace amh {
     algo_curry() {}
 
     virtual void init(TIN&...) {
-    };
+    }
 
     virtual void init(std::tuple<TIN...>&) {
-    };
+    }
 
     virtual TOUT operator()(TIN&...) {
       return TOUT();
-    };
+    }
 
     virtual TOUT operator()(std::tuple<TIN...>&) {
       return TOUT();
-    };
+    }
 
     virtual bool check(TIN&...) {
       return true;
-    };
+    }
 
     virtual bool check(std::tuple<TIN...>&) {
       return true;
-    };
+    }
 
     virtual bool check() {
       return true;
-    };
+    }
 
     virtual std::string inspect() {
       std::string s = "algo<";

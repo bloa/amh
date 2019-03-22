@@ -20,6 +20,15 @@ namespace amh {
       init();
     }
 
+    void init(TIN& in) {
+      gen_.init(in);
+      keys.resize(0);
+      max_k = max()-1;
+      for (int k=0; k<max_k+1; k++)
+        keys.push_back(k);
+      rng.shuffle(keys.begin(), keys.end());
+    }
+
     void init() {
       gen_.init();
       keys.resize(0);

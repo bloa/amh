@@ -38,7 +38,7 @@ namespace amh {
         est_payoffs[current_index] = tmp + alpha*(x-tmp);
       }
       sum_payoffs = 0;
-      for (unsigned int i=0; i<s; i++)
+      for (unsigned int i=0; i<est_payoffs.size(); i++)
         sum_payoffs += est_payoffs[i];
     }
 
@@ -70,7 +70,7 @@ namespace amh {
 
     void summary() {
       std::cout << "summary:\n";
-      for (int i=0; i<size; i++) {
+      for (int i=0; i<est_payoffs.size(); i++) {
         std::cout << i << " " << est_payoffs[i] << " " << 100*(pmin+(1-size*pmin)*est_payoffs[i]/sum_payoffs) << "%" << std::endl;
       }
       std::cout << "sum " << sum_payoffs << std::endl;

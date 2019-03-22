@@ -11,22 +11,20 @@
 #pragma once
 
 namespace amh {
-  class ctrlr_ap : public ctrlr_feed<double> {
+  class ctrlr_greedy : public ctrlr_feed<double> {
   public:
-    ctrlr_ap(double _alpha, double _beta, double _pmin) :
-      alpha(_alpha), beta(_beta), pmin(_pmin) {}
+    ctrlr_greedy(double _alpha, double _epsilon) :
+      alpha(_alpha), epsilon(_epsilon) {}
 
     void setup(int k) {
       if (k == 0)
         throw std::runtime_error("*** ERROR : zero options");
       size = k;
       est_payoffs.resize(0);
+      current_index = 0;
       //for (int i=0; i<size; i++)
       //  est_payoffs.push_back(1);
       sum_payoffs = 0;//size;
-      if (pmin > 1.0/size)
-        throw std::runtime_error("*** ERROR : pmin too big");
-      pmax = 1-(size-1)*pmin;
     }
 
     void feed(double x) {
@@ -38,45 +36,25 @@ namespace amh {
       } else {
         double tmp = est_payoffs[current_index];
         est_payoffs[current_index] = tmp + alpha*(x-tmp);
+        if (est_payoffs[current_index] >= est_payoffs[max_payoff_id])
+          max_payoff_id = current_index;
       }
       sum_payoffs = 0;
       for (unsigned int i=0; i<est_payoffs.size(); i++)
         sum_payoffs += est_payoffs[i];
     }
 
-    double probability(int i) {
-      double p = pmin+(1-size*pmin)*est_payoffs[i]/sum_payoffs;
-      if (i == max_payoff_id)
-        return p + beta*(pmax-p);
-      else
-        return p + beta*(pmin-p);
-    }
-
     void update() {
-      // update max_payoff_id
       if (est_payoffs.size() < size) {
         current_index = est_payoffs.size();
       } else {
-        double max = -1;
-        unsigned int max_i = -1;
-        for (unsigned int i=0; i<size; i++) {
-          double p = probability(i);
-          if (p>=max) {
-            max = p;
-            max_i = i;
-          }
-        }
-        max_payoff_id = max_i;
-        // roulette
         double x = rng.uniform();
-        for (unsigned int i=0; i<size; i++) {
-          double p = probability(i);
-          if (x<p) {
-            current_index = i;
-            break;
-          } else {
-            x -= p;
-          }
+        if (x > epsilon) {
+          current_index = max_payoff_id;
+        } else {
+          current_index = rng.random(size-1);
+          if (current_index >= max_payoff_id)
+            current_index++;
         }
       }
     }
@@ -85,12 +63,17 @@ namespace amh {
       return current_index;
     }
 
+    double get_payoff(int k) {
+      if (k < est_payoffs.size())
+        return est_payoffs[k];
+      else
+        return 0.0;
+    }
+
     void summary() {
-      std::cout << "summary:\n";
-      for (int i=0; i<est_payoffs.size(); i++) {
-        std::cout << i << " " << est_payoffs[i] << " " << 100*(est_payoffs[i]/sum_payoffs + pmin) << "%" << std::endl;
-      }
-      std::cout << "sum " << sum_payoffs << std::endl;
+      for (int i=0; i<est_payoffs.size(); i++)
+        std::cout << est_payoffs[i] << " ";
+      std::cout << std::endl;
     }
 
   protected:
@@ -99,10 +82,8 @@ namespace amh {
     double sum_payoffs;
     double max_payoff_id;
     double alpha = 0.5;
-    double beta = 0.5;
-    double pmin = 0;
-    double pmax = 1;
+    double epsilon = 0.5;
     int init = 0;
-    int size;
+    int size = 0;
   };
 }

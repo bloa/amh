@@ -13,12 +13,17 @@
 namespace amh {
   class ctrlr_base {
   public:
-    virtual void setup(int k) {}
+    virtual void setup(int k) {
+      current_index = k;
+    }
 
     virtual void update() {}
 
     virtual int get_index() {
-      return 0;
+      return current_index;
     }
+
+  protected:
+    int current_index = 0;
   };
 }

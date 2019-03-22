@@ -28,26 +28,26 @@ namespace amh {
     virtual void init(TIN& _in) {
       if (func_init)
         func_init(_in);
-    };
+    }
 
     virtual TOUT operator()(TIN& _in) {
       if (func_op)
         return func_op(_in);
       return retTypeHelper<TIN,TOUT>(_in);
-    };
+    }
 
     virtual TOUT operator()(TIN&& _in) {
       return operator()(_in);
-    };
+    }
 
     virtual bool check(TIN& _in) {
       last_check = !func_check || func_check(_in);
       return last_check;
-    };
+    }
 
     virtual bool check() {
       return last_check;
-    };
+    }
 
     virtual std::string inspect() {
       std::string s = "algo<";
@@ -82,34 +82,40 @@ namespace amh {
     virtual void init(TIN1& _in1, TIN2& _in2) {
       if (func_init)
         func_init(_in1, _in2);
-    };
+    }
 
     virtual void init(std::pair<TIN1,TIN2>& p) {
       init(p.first, p.second);
-    };
+    }
 
     virtual TOUT operator()(TIN1& _in1, TIN2& _in2) {
       if (func_op)
         return func_op(_in1, _in2);
       return TOUT();
-    };
+    }
+
+    virtual TOUT operator()(TIN1&& _in1, TIN2&& _in2) {
+      if (func_op)
+        return func_op(_in1, _in2);
+      return TOUT();
+    }
 
     virtual TOUT operator()(std::pair<TIN1,TIN2>& p) {
       return operator()(p.first, p.second);
-    };
+    }
 
     virtual bool check(TIN1& _in1, TIN2& _in2) {
       last_check = !func_check || func_check(_in1, _in2);
       return last_check;
-    };
+    }
 
     virtual bool check(std::pair<TIN1,TIN2>& p) {
       return check(p.first, p.second);
-    };
+    }
 
     virtual bool check() {
       return last_check;
-    };
+    }
 
     virtual std::string inspect() {
       std::string s = "algo<";
@@ -145,34 +151,34 @@ namespace amh {
     virtual void init(TIN&... _in) {
       if (func_init)
         func_init(_in...);
-    };
+    }
 
     virtual void init(std::tuple<TIN...>& t) {
-      splat(init, t);
-    };
+      this->splat(init, t);
+    }
 
     virtual TOUT operator()(TIN&... _in) {
       if (func_op)
         return func_op(_in...);
-      return TOUT();
-    };
+      // return TOUT();
+    }
 
     virtual TOUT operator()(std::tuple<TIN...>& t) {
-      splat(operator(), t);
-    };
+      this->splat(operator(), t);
+    }
 
     virtual bool check(TIN&... _in) {
       last_check = !func_check || func_check(_in...);
       return last_check;
-    };
+    }
 
     virtual bool check(std::tuple<TIN...>& t) {
-      splat(check, t);
-    };
+      return this->splat(check, t);
+    }
 
     virtual bool check() {
       return last_check;
-    };
+    }
 
     virtual std::string inspect() {
       std::string s = "algo<";
@@ -222,22 +228,22 @@ namespace amh {
     virtual void init(TIN& _in) {
       if (func_init)
         func_init(_in);
-    };
+    }
 
     virtual TIN operator()(TIN& _in) {
       if (func_op)
         func_op(_in);
       return _in;
-    };
+    }
 
     virtual bool check(TIN& _in) {
       last_check = !func_check || func_check(_in);
       return last_check;
-    };
+    }
 
     virtual bool check() {
       return last_check;
-    };
+    }
 
     virtual std::string inspect() {
       std::string s = "buff<";
@@ -251,5 +257,31 @@ namespace amh {
     std::function<void (TIN&)> func_op;
     std::function<bool (TIN&)> func_check;
     bool last_check = true;
+  };
+
+  template<class TIN, class TOUT=TIN>
+  class func_gen : public gen<TIN,TOUT> {
+  public:
+    func_gen() {}
+    func_gen(std::function<TOUT ()> _op) :
+      func_op(_op) {}
+
+    virtual TOUT operator()() {
+      if (func_op)
+        return func_op();
+      throw std::runtime_error("in `amh::func_gen': method `()' to be implemented");
+    }
+
+    virtual std::string inspect() {
+      std::string s = "gen<";
+      std::ostringstream oss;
+      oss << this;
+      s += oss.str();
+      s += ">";
+      return s;
+    }
+
+  protected:
+    std::function<TOUT ()> func_op;
   };
 }

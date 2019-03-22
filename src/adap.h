@@ -26,4 +26,5 @@
 // advanced controler
 #include <adap/ctrlr_pm.h>
 #include <adap/ctrlr_ap.h>
+#include <adap/ctrlr_greedy.h>
 #include <adap/ctrlr_ucb.h>

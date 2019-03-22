@@ -20,6 +20,11 @@ namespace amh {
         throw std::runtime_error("cannot randomize infinite generator");
     }
 
+    void init(TIN& in) {
+      gen_left.init(in);
+      gen_right.init(in);
+    }
+
     void init() {
       gen_left.init();
       gen_right.init();

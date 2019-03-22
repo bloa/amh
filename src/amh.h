@@ -51,6 +51,31 @@ void dbg() {
   std::cerr << "[debug]" << std::endl;
 }
 
+// puts helper
+template <class TH, class...TT>
+void putsaux(TH head) {
+  std::cout << head << " ";
+}
+template <class TE, class...TT>
+void putsaux(std::vector<TE> head) {
+  std::cout << "[ ";
+  for (TE& e : head)
+    putsaux(e);
+  //std::copy(head.begin(), head.end(), std::ostream_iterator<TE>(std::cout, " "));
+  std::cout << "]";
+}
+template <class TH, class...TT>
+void putsaux(TH head, TT...tail) {
+  putsaux(head);
+  putsaux(tail...);
+}
+template <class ...Args>
+void puts(Args ...args) {
+  putsaux(args...);
+  std::cout << std::endl;
+}
+void puts() {}
+
 // helper for random operations
 #include <amh/rng_helper.h>
 namespace amh {
@@ -64,6 +89,7 @@ namespace amh {
 
 // base algorithm
 #include <amh/algo.h>
+#include <amh/gen.h>
 #include <amh/func.h>
 
 // composition
@@ -73,7 +99,6 @@ namespace amh {
 #include <amh/algo_disj.h>
 
 // generators
-#include <amh/gen.h>
 #include <amh/gen_rand.h>
 #include <amh/gen_randworep.h>
 #include <amh/gen_union.h>
